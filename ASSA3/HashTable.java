@@ -1,5 +1,6 @@
 package ASSA3;
 
+
 public class HashTable<K , V> {
     private class HashNode<K , V>
     {
@@ -20,8 +21,8 @@ public class HashTable<K , V> {
                     '}';
         }
     }
-    private  HashNode<K , V>[] chainArray;
-    private int M=11;
+    private  HashNode<K , V> []chainArray;
+    private int M;
     private int size;
     public HashTable() {
         this.M =11;
@@ -38,39 +39,23 @@ public class HashTable<K , V> {
         return (key.hashCode()&0x7fffffff% M);
     }
 
-    public void put(Integer key, String value){
+    public void put(K key, V value){
         if(key == null || value == null){
             throw new IllegalArgumentException("Key or Value is null !!!");
         }
-        int bucketIndex = getBucketIndex(key);
-        HashNode head = chainArray[bucketIndex];
-        while(head != null){
-            if(head.key.equals(key)){
-                head.value = value;
-                return;
-            }
-            head = head.next;
-        }
+         chainArray[hash(key)]= new HashNode(key,value);
         size++;
-        head = chainArray[bucketIndex];
-        HashNode node = new HashNode(key, value);
-        node.next = head;
-        chainArray[bucketIndex] = node;
     }
 
-    private int getBucketIndex(Integer key){
-        return key % M;
-    }
-
-    public String get(Integer key){
+    public V get(K key){
         if(key == null){
             throw new IllegalArgumentException("Key is null !!!");
         }
-        int bucketIndex = getBucketIndex(key);
-        HashNode head = chainArray[bucketIndex];
+        int Index = hash(key);
+        HashNode head = chainArray[Index];
         while(head != null){
             if(head.key.equals(key)){
-                return head.toString();
+                return (V) head;
             }
             head = head.next;
         }
@@ -78,13 +63,13 @@ public class HashTable<K , V> {
         return null;
     }
 
-    public String remove(Integer key){
+    public V remove(K key){
         if(key == null){
             throw new IllegalArgumentException("Key is null !!!");
         }
 
-        int bucketIndex = getBucketIndex(key);
-        HashNode head = chainArray[bucketIndex];
+        int Index = hash(key);
+        HashNode head = chainArray[Index];
         HashNode previous = null;
 
         while(head != null){
@@ -101,11 +86,12 @@ public class HashTable<K , V> {
         if(previous != null){
             previous.next = head.next;
         } else {
-            chainArray[bucketIndex] = head.next;
+            chainArray[Index] = head.next;
         }
 
-        return head.toString();
+        return (V) head;
     }
+
 
 
 
